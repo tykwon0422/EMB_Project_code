@@ -1,4 +1,4 @@
-import pya
+import pyaudio
 import numpy as np
 
 CHUNK = 2**10

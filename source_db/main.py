@@ -16,18 +16,17 @@ firebase = Firebase(firebaseConfig)
 db = firebase.database()
 storage = firebase.storage()
 
-# data = {"name": "Joe"}
-# db.child("users").push(data)
-# data = {"name": "Moon", "age": 24}
-# db.child("users").child("user02").set(data)
+data = {"이름": "기계정보공학과 사무실", "전화번호": "02-6490-2380"}
+db.child("4층").child("").set(data)
 
-name = 'Kim'
+# name = '기계정보공학과 사무실'
+# #
+# floors = db.get()
+# for floor in floors.each():
+#     for rooms in floor.each():
+#         if rooms.val["이름"] == name:
+#             print(rooms.val)
 #
-users = db.child("users").get()
-for user in users.each():
-    if user.val()['name'] == name:
-        print(user.val())
-
 # storage.child("test.jpg").put("123456.jpg")
 # url = storage.child("test.jpg").get_url(None)
 # print(url)
