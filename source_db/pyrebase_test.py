@@ -51,7 +51,7 @@ auth = firebase.auth()
 # cloudfilename=input('cloudfilename')
 # storage.child(cloudfilename).download("","download_text.txt")
 
-# read file
+# read fileim
 # cloudfilename=input('cloudfilename')
 # url=storage.child(cloudfilename).get_url(None)
 # f=urllib.request.urlopen(url).read()
