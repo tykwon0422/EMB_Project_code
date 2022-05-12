@@ -1,4 +1,14 @@
-from firebase import Firebase
+import pyrebase
+import sqlite3
+
+import datetime
+
+from enum import auto
+import sys
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5 import uic
 
 firebaseConfig = {
     'apiKey': "AIzaSyDGIQoNHBmyjdiS3YLU_kFoGgyXzVcoM3k",
@@ -11,32 +21,103 @@ firebaseConfig = {
     "measurementId": "G-3FSHGHRZ54"
 }
 
-firebase = Firebase(firebaseConfig)
+firebase = pyrebase.initialize_app(firebaseConfig)
 
-db = firebase.database()
-storage = firebase.storage()
 
-data = {"이름": "기계정보공학과 사무실", "전화번호": "02-6490-2380"}
-db.child("4층").child("").set(data)
+class authorization:
+    def __init__(self):
+        self.auth = firebase.auth()
 
-# name = '기계정보공학과 사무실'
-# #
-# floors = db.get()
-# for floor in floors.each():
-#     for rooms in floor.each():
-#         if rooms.val["이름"] == name:
-#             print(rooms.val)
-#
-# storage.child("test.jpg").put("123456.jpg")
-# url = storage.child("test.jpg").get_url(None)
-# print(url)
-# key = "305"
-# storage.child("room/"+key+"/map.jpg").put("123456.jpg")
-# url = storage.child("room/"+key+"/map.jpg").get_url(None)
-#
-# data = {
-#     "name": "holy!",
-#     "Phone": '010-1234-5678',
-#     "Photo": url
-# }
-# db.child("rooms").child(key).update(data)
+
+class storage:
+    def __init__(self):
+        self.stor = firebase.storage()
+
+    def upload(self, file_name, cloud_file_name, path=None):
+        if path:
+            self.stor.child(path).child(cloud_file_name).put(file_name)
+        else:
+            self.stor.child(cloud_file_name).put(file_name)
+
+    def download_file(self, path, filename):
+        download_name = 'download.jpg'
+        self.stor.child(path + filename).download("", download_name)
+
+
+class database:
+    def __init__(self):
+        self.db = firebase.database()
+
+    def push(self, path, data):
+        self.db.child(path).push(data)
+
+    def set(self, path, data):
+        self.db.child(path).set(data)
+
+    def update(self, path, data):
+        self.db.child(path).update(data)
+
+    def delete(self, path, key):
+        self.db.child(path).child(key).remove()
+
+    def read_key(self, path):
+        datas = self.db.child(path).get()
+        ret = []
+        for data in datas.each():
+            ret.append(data.key())
+        return ret
+
+    def read_data(self, path):
+        datas = self.db.child(path).get()
+        ret = []
+        for data in datas.each():
+            ret.append(data.val())
+        return ret
+
+
+class sql:
+    def __init__(self):
+        self.conn = sqlite3.connect('./database.db')
+
+    def search(self, text):
+        default = "SELECT * FROM table"
+        with self.conn:
+            cur = self.conn.cursor()
+            cur.execute("SELECT * from rooms where id=? or name=?", (text, text)
+            rows = cur.fetchall()
+
+        return rows
+
+    def update_all(self, data):
+        default = "UADATE rooms SET room_name = ? WHERE room_number = ?"
+        with self.conn:
+            cur = self.conn.cursor()
+            try:
+                cur.executemany(default, data)
+            except:
+                return -1
+            self.conn.commit()
+            return 1
+
+
+formClass = uic.loadUiType("../UI/main.ui")[0]
+
+
+class Ui(QMainWindow, formClass):
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)
+
+    def home(self):
+        self.stackedWidget.setCurrentWidget(self.page_1)
+
+    def change_window(self, p_num):
+        page_num = 'page' + p_num
+        self.stackedWidget.setCurrentWidget(self.page_num)
+
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    currentUi = Ui()
+    currentUi.show()
+    sys.exit(app.exec_())
