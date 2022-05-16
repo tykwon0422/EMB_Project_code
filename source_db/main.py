@@ -60,15 +60,28 @@ class database:
     def delete(self, path, key):
         self.db.child(path).child(key).remove()
 
-    def read_key(self, path):
-        datas = self.db.child(path).get()
+    def read_key(self, path=None):
+        if path:
+            datas = self.db.child(path).get()
+        else:
+            datas = self.db.get()
         ret = []
         for data in datas.each():
             ret.append(data.key())
         return ret
 
-    def read_data(self, path):
-        datas = self.db.child(path).get()
+    def read_data(self, path=None, keyword=None):
+        if keyword:
+            if path:
+                datas = self.db.child(path).order_by_child(keyword).get()
+            else:
+                datas = self.db.order_by_child(keyword).get()
+        else:
+            if path:
+                datas = self.db.child(path).get()
+            else:
+                datas = self.db.get()
+
         ret = []
         for data in datas.each():
             ret.append(data.val())
@@ -78,26 +91,73 @@ class database:
 class sql:
     def __init__(self):
         self.conn = sqlite3.connect('./database.db')
+        cur = self.conn.cursor()
+        sql = "CREATE TABLE IF NOT EXISTS rooms(room_number, room_name, charge, phone)"
+        cur.execute(sql)
 
-    def search(self, text):
-        default = "SELECT * FROM table"
+        sql = "CREATE TABLE IF NOT EXISTS latest(room_number, root, qr, time)"
+        cur.execute(sql)
+
+    # sql is string, data is tuple
+
+
+    def execute(self, sql, data=None):
         with self.conn:
             cur = self.conn.cursor()
-            cur.execute("SELECT * from rooms where id=? or name=?", (text, text)
+            if data:
+                try:
+                    cur.executemany(sql, data)
+                except:
+                    return -1
+            else:
+                try:
+                    cur.execute(sql)
+                except:
+                    return -1
+
+            self.conn.commit()
+            return 1
+
+        # data is tuple.
+
+
+    def insert_rooms(self, data):
+        sql = "INSERT INTO  rooms (room_number, room_name, charge, phone) VALUES (?, ?, ?, ?)"
+        return self.execute(sql, data)
+
+        # data is tuple.
+
+
+    def insert_latest(self, data):
+        sql = "INSERT INTO latest (room_number, root, qr) VALUES (?, ?, ?)"
+        return self.execute(sql, data)
+
+        # text is string.
+
+
+    def search(self, text):
+        default = "SELECT * FROM rooms"
+        with self.conn:
+            cur = self.conn.cursor()
+            cur.execute("SELECT * from rooms where id=? or name=?", (text, text))
             rows = cur.fetchall()
 
         return rows
 
-    def update_all(self, data):
-        default = "UADATE rooms SET room_name = ? WHERE room_number = ?"
-        with self.conn:
-            cur = self.conn.cursor()
-            try:
-                cur.executemany(default, data)
-            except:
-                return -1
-            self.conn.commit()
-            return 1
+        # rooms and data are list.
+
+
+    def update_changes(self, rooms, data):
+        update_sql = []
+        cur = self.conn.cursor()
+        for i in range(len(rooms)):
+            room = rooms[i]
+            key_chain = data[i].keys()
+            for key in key_chain:
+                sql = "UPDATE rooms SET {} = ? WHERE room_number = {}".format(key, data[i][key], room)
+                if self.execute(sql) == -1:
+                    print("Update failed. point is {}.".format(key))
+                    return -1
 
 
 formClass = uic.loadUiType("../UI/main.ui")[0]
@@ -107,13 +167,24 @@ class Ui(QMainWindow, formClass):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+        self.dataList = []
+        self.column = 4
 
     def home(self):
-        self.stackedWidget.setCurrentWidget(self.page_1)
+        self.stackedWidget.setCurrentWidget(self.page_home)
 
     def change_window(self, p_num):
         page_num = 'page' + p_num
         self.stackedWidget.setCurrentWidget(self.page_num)
+
+    def updateList(self, data):
+        rows = len(data)
+        for row in range(rows):
+            for col in range(self.column):
+                self.tableWidget.setItem(row, col, QTableWidgetItem(data[row][col]))
+
+
+
 
 
 if __name__ == '__main__':
