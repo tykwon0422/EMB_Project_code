@@ -1,5 +1,6 @@
 import pyrebase
 import sqlite3
+import gpiozero
 
 import datetime
 
@@ -22,6 +23,33 @@ firebaseConfig = {
 }
 
 firebase = pyrebase.initialize_app(firebaseConfig)
+
+button_ok = gpiozero.Button(18)
+button_up = gpiozero.Button(24)
+button_down = gpiozero.Button(25)
+
+current_page = 0
+current_row = 0
+
+
+def page_next():
+    global current_page
+    current_page += 1
+
+
+def row_down():
+    global current_row
+    current_row += 1
+
+
+def row_up():
+    global current_row
+    current_row -= 1
+
+
+button_ok.when_pressed = page_next
+button_down.when_pressed = row_down
+button_up.when_pressed = row_up
 
 
 class authorization:
@@ -100,7 +128,6 @@ class sql:
 
     # sql is string, data is tuple
 
-
     def execute(self, sql, data=None):
         with self.conn:
             cur = self.conn.cursor()
@@ -120,20 +147,17 @@ class sql:
 
         # data is tuple.
 
-
     def insert_rooms(self, data):
         sql = "INSERT INTO  rooms (room_number, room_name, charge, phone) VALUES (?, ?, ?, ?)"
         return self.execute(sql, data)
 
         # data is tuple.
 
-
     def insert_latest(self, data):
         sql = "INSERT INTO latest (room_number, root, qr) VALUES (?, ?, ?)"
         return self.execute(sql, data)
 
         # text is string.
-
 
     def search(self, text):
         default = "SELECT * FROM rooms"
@@ -144,15 +168,15 @@ class sql:
 
         return rows
 
-        # rooms and data are list.
-
-
+    # rooms and data are list.
+    # rooms: 변화된 방 번호
+    # data: 방들의 키
     def update_changes(self, rooms, data):
         update_sql = []
         cur = self.conn.cursor()
         for i in range(len(rooms)):
             room = rooms[i]
-            key_chain = data[i].keys()
+            key_chain = data[i].key()
             for key in key_chain:
                 sql = "UPDATE rooms SET {} = ? WHERE room_number = {}".format(key, data[i][key], room)
                 if self.execute(sql) == -1:
@@ -182,9 +206,6 @@ class Ui(QMainWindow, formClass):
         for row in range(rows):
             for col in range(self.column):
                 self.tableWidget.setItem(row, col, QTableWidgetItem(data[row][col]))
-
-
-
 
 
 if __name__ == '__main__':
