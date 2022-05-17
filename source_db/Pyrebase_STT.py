@@ -5,7 +5,6 @@ from difflib import SequenceMatcher
 #-*- coding: utf-8 -*-
 
 class STT:
-
     def __init__(self):
         firebaseConfig = {
         'apiKey': "AIzaSyDGIQoNHBmyjdiS3YLU_kFoGgyXzVcoM3k",
