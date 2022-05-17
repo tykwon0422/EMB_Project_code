@@ -20,11 +20,12 @@ class STT:
         firebase = pyrebase.initialize_app(firebaseConfig)
         # Get Database
         self.db = firebase.database()
+        self.mic = sr.Microphone()
 
     def run(self):
         # Obtain audio from the microphone
         r = sr.Recognizer()
-        with sr.Microphone() as source:
+        with self.mic as source:
             r.adjust_for_ambient_noise(source)
             print("Say something!")
             try:
