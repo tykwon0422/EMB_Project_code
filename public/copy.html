@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+  <link href="main.css" rel="stylesheet">
+</head>
+<body>
+
+  <script src="https://www.gstatic.com/firebasejs/8.6.5/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.5/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.5/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.5/firebase-storage.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+  <script src="http://html2canvas.hertzen.com/dist/html2canvas.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      
+    };
+    
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+  </script>
+
+  <nav class="navbar navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" style="color: white" href="#">Map-Manager</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link active" style="color: white" aria-current="page" href="#">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" style="color: white" href="#">Features</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" style="color: white" href="#">Pricing</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" style="color: white" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Dropdown link
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <li><a class="dropdown-item" href="#">Action</a></li>
+                <li><a class="dropdown-item" href="#">Another action</a></li>
+                <li><a class="dropdown-item" href="#">Something else here</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </nav>
+
+  <div class="container mt-3">
+    <div class="dropdown">
+      <button class="btn btn-secondary dropdown-toggle btn-dark" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+        Floor
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+        <li><a class="dropdown-item" href="#">3층</a></li>
+        <li><a class="dropdown-item" href="#">4층</a></li>
+        <li><a class="dropdown-item" href="#">add...</a></li>
+      </ul>
+    </div>
+    <input type="text" class="form-control mt-2" id="title" placeholder="title">
+    <input class="form-control mt-2" type="file" id="image">
+    <button class="btn btn-dark mt-3" id="send">업로드</button>
+    <button class="btn btn-dark mt-3" id="save">작업 저장</button>
+  </div>
+
+  <div class="mapModifyTool m-4">
+    <button class="btn btn-secondary btn-dark" type="button" id="poi" aria-expanded="false">
+      <img src="./src/img/poi.svg" class="poiImg bg-light" id="poiImg" width="50" height="30">
+    </button>
+  </div>
+
+  <div class="mapImage m-4 pt-3" id="mapImage">
+    <!-- <div class="thumbnail m-4" style="background-image: url('https://via.placeholder.com/350')"></div>
+    <img src=""> -->
+    <img src="./src/img/과기관3층.PNG" class="poiImg bg-light" id="poiImg1" width="500" height="300">
+    <input type="text">
+  </div>
+
+  <div id="test">
+  </div>
+
+
+  <script>
+    const db = firebase.firestore();
+    const storage = firebase.storage();
+
+    $('#send').click(function() {
+
+      var uploadFile = document.querySelector('#image').files[0];
+      console.log(uploadFile);
+      console.log(document.getElementById('image').files[0]);
+      var input = document.getElementById("image");
+      var fReader = new FileReader();
+      fReader.readAsDataURL(input.files[0]);
+      fReader.onloadend = function(event){
+          var img = document.getElementById("poiImg1");
+          img.src = event.target.result;
+          console.log(img.src);
+      }
+      console.log(fReader);
+      var storageRef = storage.ref();
+      var savePath = storageRef.child('image/' + uploadFile.name);
+      var upload = savePath.put(uploadFile);
+
+      upload.on( 'state_changed',     // 이미지 업로드 성공/실패 시 코드 실행. 이미지는 사이즈가 크기 때문에 업로드 시간이 길다. 이미지 업로드가 다 된 후 코드를 실행하기 위해
+          // 업로드 중일 때 동작하는 함수 
+          null, 
+          //에러시 동작하는 함수
+          (error) => {
+          console.error('실패사유는', error);
+          }, 
+          // 성공시 동작하는 함수
+          () => {
+              upload.snapshot.ref.getDownloadURL().then((url) => {    // 이미지의 url 가져오는 함수 -> img=src / css: background-image: url()
+                  console.log('업로드된 경로는', url);                 // url은 이 함수 내에서만 사용가능
+                  var save = {
+                      제목 : $('#title').val(),
+                      날짜 : new Date(),
+                      이미지 : url
+                  }
+                  db.collection('mapSave').add(save).then((result)=>{         // result: 성공 후에 담기는 데이터 정보 저장. then(): collection성공, catch(): 실패
+                      console.log(result);
+                      //window.location.href = "/mapManage.html";
+                  }).catch(()=>{
+                      console.log(err);
+                  });          // collection함수에서 에러가 많이 발생할 수 있다.(인터넷 연결, collection이름 이슈) 따라서 에러처리 필요
+
+                  var mapTemplate = `<div class="thumbnail m-4" id='thumbnail' style="background-image: url('${url}')">
+                    <!-- <img src="./src/img/과기관3층.PNG" class="poiImg bg-light" id="poiImg" width="50" height="30"> -->
+                  </div>
+                    </div>`
+                    $('.mapImage').append(mapTemplate);              
+                  
+                });
+            }
+        );
+    })
+
+    
+    $('#save').click(function() {
+
+      html2canvas(document.body).then(canvas => {  //$('.mapImage').get(0)
+        var imgBase64 = canvas.toDataURL("image/png", 'image/octet-stream');
+        //uploadFile = uploadFile.replace("data:image/png;base64,","");
+        //var str = '<img src="' + uploadFile + '"/>'
+        const decodImg = atob(imgBase64.split(',')[1]);
+        let array = [];
+        for (let i = 0; i < decodImg .length; i++) {
+          array.push(decodImg .charCodeAt(i));
+        }
+        const file = new Blob([new Uint8Array(array)], {type: 'image/png'});
+        const fileName = 'canvas_img_' + new Date().getMilliseconds() + '.png';
+        let uploadFile = new FormData();
+        uploadFile.append('file', file, fileName);
+        document.getElementById('test').append(canvas);
+        console.log(uploadFile);
+        console.log(typeof uploadFile);
+        var storageRef = storage.ref();
+        var savePath = storageRef.child('floor3/' + uploadFile.name);
+        var upload = savePath.put(canvas);
+    
+        upload.on( 'state_changed',     // 이미지 업로드 성공/실패 시 코드 실행. 이미지는 사이즈가 크기 때문에 업로드 시간이 길다. 이미지 업로드가 다 된 후 코드를 실행하기 위해
+            // 업로드 중일 때 동작하는 함수 
+            null, 
+            //에러시 동작하는 함수
+            (error) => {
+            console.error('실패사유는', error);
+            }, 
+            // 성공시 동작하는 함수
+            () => {
+                upload.snapshot.ref.getDownloadURL().then((url) => {    // 이미지의 url 가져오는 함수 -> img=src / css: background-image: url()
+                    console.log('업로드된 경로는', url);                 // url은 이 함수 내에서만 사용가능
+                    var save = {
+                        제목 : $('#title').val(),
+                        날짜 : new Date(),
+                        이미지 : url
+                    }
+                    db.collection('mapSave').doc('floor3').set(save).then((result)=>{         // result: 성공 후에 담기는 데이터 정보 저장. then(): collection성공, catch(): 실패
+                        console.log(result);
+                        //window.location.href = "/mapManage.html";
+                    }).catch(()=>{
+                        console.log(err);
+                    });          // collection함수에서 에러가 많이 발생할 수 있다.(인터넷 연결, collection이름 이슈) 따라서 에러처리 필요
+    
+                 });
+                }
+              );
+            })          
+        });
+
+      
+
+    
+    const addpoi = document.getElementById('poiImg');
+    addpoi.addEventListener('click', create_poi);   // poi 버튼 클릭하면 텍스트 창 생성
+
+    function create_poi() {  // poi 생성 함수
+      var poi = document.createElement('img');
+      document.body.appendChild(poi);
+      poi.outerHTML = "<img src='./src/img/poi.svg' id='poiNew'>";    
+  }
+
+  addpoi.onmousedown = function(event) {
+
+    // onmousedown. shiftX∙shiftY 변수에 pointer에서 공의 왼쪽 위 모서리까지의 거리를 기억합니다. 공을 드래그하는 동안 이 거리를 유지합니다.
+    let shiftX = event.clientX - addpoi.getBoundingClientRect().left;
+    let shiftY = event.clientY - addpoi.getBoundingClientRect().top;
+
+    // 포인터 아래로 공을 이동시킵니다.
+    moveAt(event.pageX, event.pageY);
+
+    // (1) absolute 속성과 zIndex 프로퍼티를 수정해 공이 제일 위에서 움직이기 위한 준비를 합니다.
+    poiNew.style.position = 'absolute';
+    poiNew.style.zIndex = 1000;
+
+    // 현재 위치한 부모에서 body로 직접 이동하여
+    // body를 기준으로 위치를 지정합니다.
+    document.body.append(poiNew);
+
+    // 포인터 아래로 공을 이동시킵니다.
+    //moveAt(event.pageX, event.pageY);
+
+    // 초기 이동을 고려한 좌표 (pageX, pageY)에서
+    // 공을 이동합니다.
+    function moveAt(pageX, pageY) {
+        poiNew.style.left = pageX - shiftX + 'px';
+        poiNew.style.top = pageY - shiftY + 'px';
+    }
+
+    function onMouseMove(event) {
+        moveAt(event.pageX, event.pageY);
+    }
+
+    // (2) mousemove로 공을 움직입니다.
+    document.addEventListener('mousemove', onMouseMove);
+
+    // (3) 공을 드롭하고, 불필요한 핸들러를 제거합니다.
+    poiNew.onmouseup = function() {
+        document.removeEventListener('mousemove', onMouseMove);
+        poiNew.onmouseup = null;
+    };
+
+  };
+
+  poiNew.ondragstart = function() {
+      return false;
+  };
+
+
+  
+  
+  </script>
+
+
+</body>
+</html>
