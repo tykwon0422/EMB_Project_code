@@ -2,15 +2,9 @@ import pyrebase
 import urllib
 
 firebaseConfig = {
-    'apiKey': "AIzaSyDGIQoNHBmyjdiS3YLU_kFoGgyXzVcoM3k",
-    'authDomain': "proj2022-3cd0d.firebaseapp.com",
-    'databaseURL': "https://proj2022-3cd0d-default-rtdb.firebaseio.com",
-    'projectId': "proj2022-3cd0d",
-    'storageBucket': "proj2022-3cd0d.appspot.com",
-    'messagingSenderId': "752819259660",
-    'appId': "1:752819259660:web:dc7e0da1d53f6e7043e129",
-    'measurementId': "G-3FSHGHRZ54"
+    #use your firebaseconfig
 }
+
 
 firebase = pyrebase.initialize_app(firebaseConfig)
 
@@ -41,10 +35,7 @@ auth = firebase.auth()
 
 # storage
 # upload
-# filename = input("Enter the name of the file you want to upload")
-# cloudfilename = input("on the cloud")
-# storage.child(cloudfilename).put(filename)
-#
+
 # print(storage.child(cloudfilename).get_url(None))
 
 # download
@@ -82,7 +73,8 @@ auth = firebase.auth()
 # read
 floors = db.get()
 for floor in floors.each():
-  rooms = db.child(floor.key()).order_by_child("이름").start_at("경비실").limit_to_first(1).get()
-  for room in rooms.each():
-    print(room.key())
-
+    if floor.key() == 0:
+        continue
+    rooms = db.child(floor.key()).order_by_child("name").get()
+    for room in rooms.each():
+        print(room.key(), room.val()["name"])

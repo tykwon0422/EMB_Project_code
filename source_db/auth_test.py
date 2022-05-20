@@ -3,15 +3,9 @@ from time import sleep
 import sqlite3
 
 firebaseConfig = {
-    'apiKey': "AIzaSyDGIQoNHBmyjdiS3YLU_kFoGgyXzVcoM3k",
-    'authDomain': "proj2022-3cd0d.firebaseapp.com",
-    'databaseURL': "https://proj2022-3cd0d-default-rtdb.firebaseio.com",
-    'projectId': "proj2022-3cd0d",
-    'storageBucket': "proj2022-3cd0d.appspot.com",
-    'messagingSenderId': "752819259660",
-    'appId': "1:752819259660:web:dc7e0da1d53f6e7043e129",
-    'measurementId': "G-3FSHGHRZ54"
+    #use your firebaseconfig
 }
+
 
 firebase = pyrebase.initialize_app(firebaseConfig)
 
@@ -43,10 +37,19 @@ auth = firebase.auth()
 
 db = firebase.database()
 
+
 floors = db.get()
+# for floor in floors.each():
+#     print("{}, {}".format(floor.key(), type(floor.key())))
+# db.child(0).remove()
+# floor = db.get()
+# print(floors.val())
 floors_data = []
 i = 0
 for floor in floors.each():
+    if floor.key() == 0:
+        continue
+
     floor_data = []
     # print(format(floor.key()))
     rooms = db.child(floor.key()).get()
@@ -82,24 +85,25 @@ for floor in floors.each():
         floor_data.append(room_data)
     floors_data.append(floor_data)
 
+print(floors_data)
 # for data_list in floors_data:
 #     print(data_list)
-
-conn = sqlite3.connect("./test.db")
-
-
-with conn:
-    sql = "INSERT INTO rooms (room_number, room_name, charge, phone) VALUES (?,?,?,?)"
-    cur = conn.cursor()
-    for floor_data in floors_data:
-        f_data = []
-        for data in floor_data:
-            item = (data[0], data[1], data[2], data[3])
-            f_data.append(item)
-        print(f_data)
-        cur.executemany(sql, f_data)
-
-    conn.commit()
+#
+# conn = sqlite3.connect("./test.db")
+#
+#
+# with conn:
+#     sql = "INSERT INTO rooms (room_number, room_name, charge, phone) VALUES (?,?,?,?)"
+#     cur = conn.cursor()
+#     for floor_data in floors_data:
+#         f_data = []
+#         for data in floor_data:
+#             item = (data[0], data[1], data[2], data[3])
+#             f_data.append(item)
+#         print(f_data)
+#         cur.executemany(sql, f_data)
+#
+#     conn.commit()
 
 
 # for floor in floors.each():
