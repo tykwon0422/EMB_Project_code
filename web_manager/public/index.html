@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
-  <link rel="stylesheet" href="style.css?after1">
+  <link rel="stylesheet" href="style.css?after2">
 </head>
 <body>
 
@@ -67,7 +67,7 @@
 
   <div class="container mt-3">
     <div class="dropdown">
-      <button class="btn btn-secondary dropdown-toggle btn-dark" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+      <button class="btn dropdown-toggle btn-dark" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
         Floor
       </button>
       <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
@@ -111,12 +111,31 @@
     var roomName = document.getElementById('Roomname');
     var phone = document.getElementById('Phone');
 
-    //var saveBtn = document.getElementById('save');
+    var floorNumb = 0;
+    var roomNumb = 0;
+
+    class Mutex {
+      constructor() {
+        this.lock = false;
+      }
+
+      async acquire() {
+        while (true) {
+          if (this.lock === false) break;
+          await sleep(100);
+        }
+        this.lock = true;
+      }
+
+      release() {
+        this.lock = false;
+      }
+    }
+
+    const mutex = new Mutex();
 
     function readData(floorNumb, roomNumb) {    // 파이어베이스로부터 데이터를 읽어오는 함수
       var buttonRef = firebase.database().ref(floorNumb + roomNumb);
-      console.log(floorNumb);
-      console.log(roomNumb);
       buttonRef.on('value', (snapshot) => {
         charge.value = snapshot.val().charge;
         roomName.value = snapshot.val().name;
@@ -130,12 +149,13 @@
         name: roomName.value,
         phone: phone.value
       });
-      console.log('check');
     }
 
     $('#floor3').click(function() {
 
       $('#thumbnail').remove();
+      
+      floorNumb = '3/';
 
       var storageRef = storage.ref();
       // Create a reference with an initial file path and name
@@ -153,37 +173,39 @@
         console.log(url);
 
         var mapTemplate = `<div class="thumbnail" id='thumbnail'>
-          <img src="${url}" class="mapImg bg-light" id="mapImg3"></img>
+          <img src="${url}" class="mapImg3 bg-light" id="mapImg3"></img>
         </div>`;
 
         $('.mapImage').append(mapTemplate);
 
-        var buttonTemplate = `<button class="button" type="button" id='button301' style='top: 120px; left: 160px;'>
+        var buttonTemplate = `<button class="button" type="button" id='button301' style='top: 110px; left: 160px;'>
           301
         </button>
-        <button class="button" type="button" id='button302' style='top: 120px; left: 280px;'>
+        <button class="button" type="button" id='button302' style='top: 110px; left: 280px;'>
           302
         </button>`;
 
         $('#thumbnail').append(buttonTemplate);
 
         $('#button301').click(function() {
-          var floorNumb = '3/'
-          var roomNumb = '301/';
+          roomNumb = '301/';
           readData(floorNumb, roomNumb);
-          //saveBtn.addEventListener('click', writeData(floorNumb, roomNumb));
+          
           $('#save').click(function() {
             writeData(floorNumb, roomNumb);
+            console.log(floorNumb);
+            console.log(roomNumb);
           })
+          console.log('check');
         })
         
         $('#button302').click(function() {
-          var floorNumb = '3/'
-          var roomNumb = '302/';
+          roomNumb = '302/';
           readData(floorNumb, roomNumb);
-          //saveBtn.addEventListener('click', writeData(floorNumb, roomNumb));
           $('#save').click(function() {
             writeData(floorNumb, roomNumb);
+            console.log(floorNumb);
+            console.log(roomNumb);
           })
         })
           
