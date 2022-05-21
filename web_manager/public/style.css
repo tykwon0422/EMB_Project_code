@@ -1,15 +1,22 @@
+.container2 {
+    display: grid;
+    place-items: center;
+}
+
 .mapImage {
+    display: grid;
     width: 1600px;
     height: 640px;
     border: 10px solid darkblue;
+    place-items: center;
 }
 
 
 .thumbnail {
     /* max-width: 200px; */
     position: relative;
-    left: 40px;
-    bottom: 5px;
+    /* left: 40px;
+    bottom: 5px; */
     width: 1500px;
     height: 663px;
     /* background-size: cover; */
