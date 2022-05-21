@@ -43,26 +43,35 @@
 }
 
 .mapImage {
-    display: grid;
     width: 1600px;
-    height: 640px;
-    border: 10px solid darkblue;
-    place-items: center;
+    height: 1200px;
 }
 
 
 .thumbnail {
     /* max-width: 200px; */
+    float: left;
     position: relative;
-    width: 1500px;
-    height: 600px;
+    width: 537px;
+    height: 1200px;
+    border: 10px solid darkblue;
+    /* background-size: cover; */
+    /* background-position: center; */
+}
+
+.changedImg3 {
+    /* max-width: 200px; */
+    float: right;
+    position: relative;
+    width: 537px;
+    height: 1200px;
+    border: 10px solid darkblue;
     /* background-size: cover; */
     /* background-position: center; */
 }
 
 .mapImg3 {
     position: absolute;
-    bottom: 10px;
 }
 
 

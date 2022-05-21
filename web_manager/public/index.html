@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
-  <link rel="stylesheet" href="style.css?after2">
+  <link rel="stylesheet" href="style.css?after3">
 </head>
 <body>
 
@@ -99,6 +99,229 @@
       if (user) {
         var uid = user.uid;
         console.log(uid);  
+        if (uid == 'yH1NfWZKI0WjcBP5jYwJCASvEVg1') {  // uid별로 회원 정보 관리
+          $('#floor3').click(function() {
+
+            $('#thumbnail').remove();
+            $('#changed').remove();
+            
+            floorNumb = '3/';
+      
+            var storageRef = storage.ref();
+            // Create a reference with an initial file path and name
+            var storagePathReference = storage.ref('floor3/3층 기본 지도(명칭x).png');
+      
+            // Create a reference from a Google Cloud Storage URI
+            var gsReference = storage.refFromURL('gs://bucket/floor3/3층 기본 지도(명칭x).png');
+      
+            // Create a reference from an HTTPS URL
+            // Note that in the URL, characters are URL escaped!
+            var httpsReference = storage.refFromURL('https://firebasestorage.googleapis.com/v0/b/proj2022-3cd0d.appspot.com/o/floor3%2F3%EC%B8%B5%20%EA%B8%B0%EB%B3%B8%20%EC%A7%80%EB%8F%84(%EB%AA%85%EC%B9%ADx).png?alt=media&token=886d2974-dfed-40e3-a103-33f99848c1c1');  
+            
+            storagePathReference.getDownloadURL().then((url) => {
+              // `url` is the download URL for 'images/stars.jpg'
+              console.log(url);
+      
+              var mapTemplate = `<div class="thumbnail" id='thumbnail'>
+                <img src="${url}" class="mapImg3 bg-light" id="mapImg3"></img>
+              </div>
+              <div class="changed" id='changed'>
+                <img src="${url}" class="changedImg3 bg-light" id="changedImg3"></img>
+              </div>`;
+      
+              $('.mapImage').append(mapTemplate);
+      
+              var buttonTemplate = `<button class="button" type="button" id='button301' style='top: 130px; left: 370px;'>
+                301
+              </button>
+              <button class="button" type="button" id='button304' style='top: 225px; left: 370px;'>
+                304
+              </button>
+              <button class="button" type="button" id='button305' style='top: 317px; left: 370px;'>
+                305
+              </button>
+              <button class="button" type="button" id='button307' style='top: 415px; left: 370px;'>
+                307
+              </button>
+              <button class="button" type="button" id='button309' style='top: 505px; left: 370px;'>
+                309
+              </button>
+              <button class="button" type="button" id='button311' style='top: 600px; left: 370px;'>
+                311
+              </button>
+              <button class="button" type="button" id='button329' style='top: 180px; left: 205px;'>
+                329
+              </button>
+              <button class="button" type="button" id='button327' style='top: 317px; left: 205px;'>
+                327
+              </button>
+              <button class="button" type="button" id='button314' style='top: 520px; left: 120px;'>
+                314
+              </button>
+              <button class="button" type="button" id='button316' style='top: 665px; left: 65px;'>
+                316
+              </button>
+              <button class="button" type="button" id='button318' style='top: 805px; left: 35px;'>
+                318
+              </button>
+              <button class="button" type="button" id='button320' style='top: 905px; left: 57px;'>
+                320
+              </button>
+              <button class="button" type="button" id='button321' style='top: 958px; left: 87px;'>
+                321
+              </button>
+              <button class="button" type="button" id='button322' style='top: 1003px; left: 134px;'>
+                322
+              </button>
+              <button class="button" type="button" id='button323' style='top: 1040px; left: 192px;'>
+                323
+              </button>
+              <button class="button" type="button" id='button324' style='top: 1077px; left: 270px;'>
+                324
+              </button>
+              <button class="button" type="button" id='button326' style='top: 1100px; left: 357px;'>
+                326
+              </button>`;
+      
+              $('#thumbnail').append(buttonTemplate);
+      
+              $('#button301').click(function() {
+                roomNumb = '301/';
+                readData(floorNumb, roomNumb);
+                
+                $('#save').click(function() {
+                  writeData(floorNumb, roomNumb);
+                  console.log(floorNumb);
+                  console.log(roomNumb);
+                })
+                console.log('check');
+              })
+              
+              $('#button304').click(function() {
+                roomNumb = '304/';
+                readData(floorNumb, roomNumb);
+                $('#save').click(function() {
+                  writeData(floorNumb, roomNumb);
+                  console.log(floorNumb);
+                  console.log(roomNumb);
+                })
+              })
+                
+              
+            
+      
+      
+      
+      
+              
+            })
+            .catch((error) => {
+              // Handle any errors
+            });
+          })
+      
+          $('#floor4').click(function() {
+      
+            $('#thumbnail').remove();
+            $('#changed').remove();
+      
+            var storageRef = storage.ref();
+            // Create a reference with an initial file path and name
+            var storagePathReference = storage.ref('floor4/4층 기본 지도(명칭x).png');
+      
+            // Create a reference from a Google Cloud Storage URI
+            var gsReference = storage.refFromURL('gs://bucket/floor4/4층 기본 지도(명칭x).png');
+      
+            // Create a reference from an HTTPS URL
+            // Note that in the URL, characters are URL escaped!
+            var httpsReference = storage.refFromURL('https://firebasestorage.googleapis.com/v0/b/proj2022-3cd0d.appspot.com/o/floor4%2F4%EC%B8%B5%20%EA%B8%B0%EB%B3%B8%20%EC%A7%80%EB%8F%84(%EB%AA%85%EC%B9%ADx).png?alt=media&token=a281cb77-e258-4f94-bf41-7e938543975b');  
+            
+            storagePathReference.getDownloadURL().then((url) => {
+              // `url` is the download URL for 'images/stars.jpg'
+              console.log(url);
+      
+              var mapTemplate = `<div class="thumbnail" id='thumbnail'>
+                <img src="${url}" class="mapImg bg-light" id="mapImg4" >
+              </div>
+              <div class="changed" id='changed'>
+                <img src="${url}" class="changedImg3 bg-light" id="changedImg3"></img>
+              </div>`;
+      
+              $('.mapImage').append(mapTemplate);
+
+              var buttonTemplate = `<button class="button" type="button" id='button403' style='top: 145px; left: 405px;'>
+                403
+              </button>
+              <button class="button" type="button" id='button404' style='top: 222px; left: 405px;'>
+                404
+              </button>
+              <button class="button" type="button" id='button405' style='top: 293px; left: 405px;'>
+                405
+              </button>
+              <button class="button" type="button" id='button407' style='top: 390px; left: 405px;'>
+                407
+              </button>
+              <button class="button" type="button" id='button409' style='top: 482px; left: 405px;'>
+                409
+              </button>
+              <button class="button" type="button" id='button412' style='top: 572px; left: 405px;'>
+                412
+              </button>
+              <button class="button" type="button" id='button430' style='top: 167px; left: 225px;'>
+                430
+              </button>
+              <button class="button" type="button" id='button428' style='top: 293px; left: 225px;'>
+                428
+              </button>
+              <button class="button" type="button" id='button414' style='top: 485px; left: 138px;'>
+                414
+              </button>
+              <button class="button" type="button" id='button416' style='top: 580px; left: 93px;'>
+                416
+              </button>
+              <button class="button" type="button" id='button417' style='top: 623px; left: 73px;'>
+                417
+              </button>
+              <button class="button" type="button" id='button418' style='top: 665px; left: 53px;'>
+                418
+              </button>
+              <button class="button" type="button" id='button419' style='top: 715px; left: 35px;'>
+                419
+              </button>
+              <button class="button" type="button" id='button420' style='top: 780px; left: 37px;'>
+                420
+              </button>
+              <button class="button" type="button" id='button421' style='top: 840px; left: 50px;'>
+                421
+              </button>
+              <button class="button" type="button" id='button422' style='top: 905px; left: 70px;'>
+                422
+              </button>
+              <button class="button" type="button" id='button423' style='top: 958px; left: 105px;'>
+                423
+              </button>
+              <button class="button" type="button" id='button424' style='top: 1003px; left: 155px;'>
+                424
+              </button>
+              <button class="button" type="button" id='button425' style='top: 1045px; left: 215px;'>
+                425
+              </button>
+              <button class="button" type="button" id='button426' style='top: 1077px; left: 282px;'>
+                426
+              </button>
+              <button class="button" type="button" id='button427' style='top: 1100px; left: 350px;'>
+                427
+              </button>`;
+      
+              $('#thumbnail').append(buttonTemplate);
+
+            })
+            .catch((error) => {
+              // Handle any errors
+            });
+          })
+      
+        }
       } else {
         window.location.href = "/login.html";  // 로그인 상태가 아니면 로그인 화면으로 이동
       }
@@ -130,108 +353,8 @@
       });
     }
 
-    $('#floor3').click(function() {
-
-      $('#thumbnail').remove();
-      
-      floorNumb = '3/';
-
-      var storageRef = storage.ref();
-      // Create a reference with an initial file path and name
-      var storagePathReference = storage.ref('floor3/3층 기본 지도(명칭x).png');
-
-      // Create a reference from a Google Cloud Storage URI
-      var gsReference = storage.refFromURL('gs://bucket/floor3/3층 기본 지도(명칭x).png');
-
-      // Create a reference from an HTTPS URL
-      // Note that in the URL, characters are URL escaped!
-      var httpsReference = storage.refFromURL('https://firebasestorage.googleapis.com/v0/b/proj2022-3cd0d.appspot.com/o/floor3%2F3%EC%B8%B5%20%EA%B8%B0%EB%B3%B8%20%EC%A7%80%EB%8F%84(%EB%AA%85%EC%B9%ADx).png?alt=media&token=6a5c17b9-9521-4536-aef9-e000c22a3680');  
-      
-      storagePathReference.getDownloadURL().then((url) => {
-        // `url` is the download URL for 'images/stars.jpg'
-        console.log(url);
-
-        var mapTemplate = `<div class="thumbnail" id='thumbnail'>
-          <img src="${url}" class="mapImg3 bg-light" id="mapImg3"></img>
-        </div>`;
-
-        $('.mapImage').append(mapTemplate);
-
-        var buttonTemplate = `<button class="button" type="button" id='button301' style='top: 110px; left: 160px;'>
-          301
-        </button>
-        <button class="button" type="button" id='button302' style='top: 110px; left: 280px;'>
-          302
-        </button>`;
-
-        $('#thumbnail').append(buttonTemplate);
-
-        $('#button301').click(function() {
-          roomNumb = '301/';
-          readData(floorNumb, roomNumb);
-          
-          $('#save').click(function() {
-            writeData(floorNumb, roomNumb);
-            console.log(floorNumb);
-            console.log(roomNumb);
-          })
-          console.log('check');
-        })
-        
-        $('#button302').click(function() {
-          roomNumb = '302/';
-          readData(floorNumb, roomNumb);
-          $('#save').click(function() {
-            writeData(floorNumb, roomNumb);
-            console.log(floorNumb);
-            console.log(roomNumb);
-          })
-        })
-          
-        
-      
-
-
-
-
-        
-      })
-      .catch((error) => {
-        // Handle any errors
-      });
-    })
-
-    $('#floor4').click(function() {
-
-      $('#thumbnail').remove();
-
-      var storageRef = storage.ref();
-      // Create a reference with an initial file path and name
-      var storagePathReference = storage.ref('floor4/4층 기본 지도(명칭x).png');
-
-      // Create a reference from a Google Cloud Storage URI
-      var gsReference = storage.refFromURL('gs://bucket/floor4/4층 기본 지도(명칭x).png');
-
-      // Create a reference from an HTTPS URL
-      // Note that in the URL, characters are URL escaped!
-      var httpsReference = storage.refFromURL('https://firebasestorage.googleapis.com/v0/b/proj2022-3cd0d.appspot.com/o/floor4%2F4%EC%B8%B5%20%EA%B8%B0%EB%B3%B8%20%EC%A7%80%EB%8F%84(%EB%AA%85%EC%B9%ADx).png?alt=media&token=dfac355a-aefc-461f-bdb2-6153356c510c');  
-      
-      storagePathReference.getDownloadURL().then((url) => {
-        // `url` is the download URL for 'images/stars.jpg'
-        console.log(url);
-
-        var mapTemplate = `<div class="thumbnail m-4" id='thumbnail'>
-          <img src="${url}" class="mapImg bg-light" id="mapImg4" >
-        </div>`;
-
-        $('.mapImage').append(mapTemplate);
-      })
-      .catch((error) => {
-        // Handle any errors
-      });
-    })
-
-    $('#send').click(function() {
+    
+    /*$('#send').click(function() {
 
       var uploadFile = document.querySelector('#image').files[0];
       console.log(uploadFile);
@@ -284,7 +407,7 @@
                 });
             }
         );
-    })
+    })*/
 
     
     /*$('#save').click(function() {
