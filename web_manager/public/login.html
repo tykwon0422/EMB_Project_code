@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
-  <link href="main.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?after2">
 </head>
 <body>
 
@@ -30,51 +30,28 @@
     firebase.initializeApp(firebaseConfig);
   </script>
 
-  <nav class="navbar navbar-dark bg-dark">
+  <nav class="navbar navbar-dark bg-dark" style="height: 75px;">
     <nav class="navbar navbar-expand-lg bg-dark">
       <div class="container-fluid">
-        <a class="navbar-brand" style="color: white" href="#">Map-Manager</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNavDropdown">
-          <ul class="navbar-nav">
-            <li class="nav-item">
-              <a class="nav-link active" style="color: white" aria-current="page" href="#">Home</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" style="color: white" href="#">Features</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" style="color: white" href="#">Pricing</a>
-            </li>
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" style="color: white" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Dropdown link
-              </a>
-              <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                <li><a class="dropdown-item" href="#">Action</a></li>
-                <li><a class="dropdown-item" href="#">Another action</a></li>
-                <li><a class="dropdown-item" href="#">Something else here</a></li>
-              </ul>
-            </li>
-          </ul>
-        </div>
+        
       </div>
     </nav>
   </nav>
 
-  <div class="container mt-5">
-    <div class="mb-3">
-      <input type="text" class="form-control" placeholder="name" id="name-new">
+  <div class="logoBox">
+    <div class="logo m-5">
+      Map Manager
+    </div>  
+  </div>
+  
+  <div class="container mt-3">
+    <div class="loginInput mb-4">
+      <input type="email" class="form-control" placeholder="ID" id="id">
     </div>
-    <div class="mb-3">
-      <input type="email" class="form-control" placeholder="email" id="email-new">
+    <div class="loginInput mb-4">
+      <input type="password" class="form-control" placeholder="PW" id="pw">
     </div>
-    <div class="mb-3">
-      <input type="password" class="form-control" placeholder="pw" id="pw-new">
-    </div>
-    <button type="submit" class="btn btn-primary" id="register">가입하기</button>
+    <button type="submit" class="btn btn-dark" id="login">Log-in</button>
  </div>
 
   
@@ -86,17 +63,31 @@
   <script>
     const db = firebase.firestore();
     const storage = firebase.storage();
+    const auth = firebase.auth();
 
-    $('#register').click(function() {
+    $('#login').click(function() {
 
-        var email = $('#email-new').val();
-        var password = $('#pw-new').val();
+        var id = $('#id').val();
+        var password = $('#pw').val();
 
-        firebase.auth().createUserWithEmailAndPassword(email, password).then((result) => {
+        var email = id + '@map.com';
+
+        auth.signInWithEmailAndPassword(email, password).then((userCredential) => {
+          alert('로그인 성공');
+          var user = userCredential.user;
+          window.location.href = "/index.html";
+        })
+        .catch((error) => {
+          var errorCode = error.code;
+          var errorMessage = error.message;
+          alert("로그인 실패: 아이디 또는 비밀번호를 확인하세요.");
+        });
+
+        /*auth.createUserWithEmailAndPassword(email, password).then((result) => {   // 새로운 계정 생성
             console.log(result);
             console.log(result.user);
             window.location.href = "/index.html";
-        })
+        })*/
     })
   
   

@@ -31,63 +31,43 @@
     firebase.initializeApp(firebaseConfig);
   </script>
 
-  <nav class="navbar navbar-dark bg-dark">
+  <nav class="navbar navbar-dark bg-dark" id="navbar">
     <nav class="navbar navbar-expand-lg bg-dark">
       <div class="container-fluid">
-        <a class="navbar-brand" style="color: white" href="#">Map-Manager</a>
+        <a class="navbar-brand" id="homeButton" style="color: white" href="#">Map-Manager</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarNavDropdown">
-          <ul class="navbar-nav">
-            <li class="nav-item">
-              <a class="nav-link active" style="color: white" aria-current="page" href="#">Home</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" style="color: white" href="#">Features</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" style="color: white" href="#">Pricing</a>
-            </li>
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" style="color: white" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Dropdown link
-              </a>
-              <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                <li><a class="dropdown-item" href="#">Action</a></li>
-                <li><a class="dropdown-item" href="#">Another action</a></li>
-                <li><a class="dropdown-item" href="#">Something else here</a></li>
-              </ul>
-            </li>
-          </ul>
-        </div>
       </div>
     </nav>
+    <button type="button" class="btn btn-light" id="logout">
+      Log-out
+    </button>
   </nav>
 
-  <div class="container mt-3">
-    <div class="dropdown">
-      <button class="btn dropdown-toggle btn-dark" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+  <div class="secondContainer mt-4">
+    <div class="dropdown" id="dropdown">
+      <button class="btn dropdown-toggle btn-dark" type="button" id="floorButton" data-bs-toggle="dropdown" aria-expanded="false">
         Floor
       </button>
-      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+      <ul class="dropdown-menu" aria-labelledby="floorButton">
         <li><a class="dropdown-item" href="#" id="floor3">3층</a></li>
         <li><a class="dropdown-item" href="#" id="floor4">4층</a></li>
         <li><a class="dropdown-item" href="#">add...</a></li>
       </ul>
+      <button class="btn btn-dark" id="save">
+        Save
+      </button>
     </div>
-    <!-- <input type="text" class="form-control mt-2" id="title" placeholder="title"> -->
-    <!-- <input class="form-control mt-2" type="file" id="image"> -->
-    <button class="btn btn-dark mt-3" id="save">작업 저장</button>
   </div>
 
   <div class="placeInformationModify m-4">
     <div class="input-group">
-      <span class="input-group-text">책임자 : </span>
+      <span class="input-group-text">Charge : </span>
       <input type="text" aria-label="charge" class="form-control" id="Charge">
-      <span class="input-group-text">장소 명칭 : </span>
+      <span class="input-group-text">Name : </span>
       <input type="text" aria-label="name" class="form-control" id="Roomname">
-      <span class="input-group-text">대표번호 : </span>
+      <span class="input-group-text">Call : </span>
       <input type="text" aria-label="phone" class="form-control" id="Phone">
     </div>
   </div>
@@ -106,6 +86,7 @@
     const db = firebase.firestore();
     const storage = firebase.storage();
     var database = firebase.database();
+    const auth = firebase.auth();
 
     var charge = document.getElementById('Charge');
     var roomName = document.getElementById('Roomname');
@@ -114,26 +95,24 @@
     var floorNumb = 0;
     var roomNumb = 0;
 
-    class Mutex {
-      constructor() {
-        this.lock = false;
+    auth.onAuthStateChanged((user) => {   // 사용자의 로그인 상태를 확인
+      if (user) {
+        var uid = user.uid;
+        console.log(uid);  
+      } else {
+        window.location.href = "/login.html";  // 로그인 상태가 아니면 로그인 화면으로 이동
       }
+    });
 
-      async acquire() {
-        while (true) {
-          if (this.lock === false) break;
-          await sleep(100);
-        }
-        this.lock = true;
-      }
+    $('#logout').click(function() {   // 로그아웃 버튼 동작 구현
+      auth.signOut().then(function() {
+        window.location.href = "/login.html";
+      }).catch(function(error) {
+        alert("로그아웃 에러");
+      })
+    })
 
-      release() {
-        this.lock = false;
-      }
-    }
-
-    const mutex = new Mutex();
-
+    
     function readData(floorNumb, roomNumb) {    // 파이어베이스로부터 데이터를 읽어오는 함수
       var buttonRef = firebase.database().ref(floorNumb + roomNumb);
       buttonRef.on('value', (snapshot) => {

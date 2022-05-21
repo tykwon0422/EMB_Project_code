@@ -1,3 +1,42 @@
+* {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+
+/* index.html */
+.secondContainer {
+    width: 100%;
+}
+
+#dropdown {
+    position: relative;
+    width: 100%;
+    height: 50px;
+}
+
+#floorButton {
+    position: absolute;
+    float: left;
+    left: 30px;
+}
+
+#save {
+    position: absolute;
+    float: right;
+    right: 30px;
+    width: 80px;
+}
+
+.placeInformationModify {
+    display: grid;
+    place-items: center;
+    position: relative;
+}
+
+.input-group {
+    width: 80%;
+}
+
 .container2 {
     display: grid;
     place-items: center;
@@ -33,3 +72,49 @@
     width: 60px;
     height: 30px;
 }
+
+#navbar {
+    position: relative;
+}
+#logout {
+    position: absolute;
+    right: 20px;
+    /* width: 100px;
+    height: 40px; */
+    text-align: center;
+}
+
+/* login.html */
+.logoBox {
+    height: 400px;
+    text-align: center;
+}
+
+.logo {
+    display: inline-block;
+    place-items: center;
+    width: 500px;
+    height: 400px;
+    text-align: center;
+    font-size: 100px;
+    font-weight: bold;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+.loginInput {
+    text-align: center;
+    margin: auto;
+}
+
+.form-control {
+    width: 250px;
+    display: inline-block;
+    place-items: center;
+}
+
+#login {
+    display: block;
+    margin: auto;
+    width: 150px;
+}
+
