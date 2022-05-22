@@ -31,19 +31,46 @@
     display: grid;
     place-items: center;
     position: relative;
+    height: 100px;
 }
 
 .input-group {
     width: 80%;
 }
 
+.mapDefinition {
+    text-align: center;
+    width: 100%;
+    height: 40px;
+}
+
+.mapDefinitionIn {
+    display: inline-block;
+    width: 1500px;
+    height: 40px;
+}
+
+.manageZone {
+    width: 537px;
+    float: left;
+    font-size: 30px;
+}
+
+.userViewZone {
+    width: 537px;
+    float: right;
+    font-size: 30px;
+}
+
 .container2 {
     display: grid;
     place-items: center;
+    width: 100%;
+    height: 1250px;
 }
 
 .mapImage {
-    width: 1600px;
+    width: 1500px;
     height: 1200px;
 }
 
@@ -59,7 +86,7 @@
     /* background-position: center; */
 }
 
-.changedImg3 {
+.changed {
     /* max-width: 200px; */
     float: right;
     position: relative;
@@ -69,6 +96,14 @@
     /* background-size: cover; */
     /* background-position: center; */
 }
+
+/* .changedImg3 {
+    float: right;
+    position: relative;
+    width: 537px;
+    height: 1200px;
+    border: 10px solid darkblue;
+} */
 
 .mapImg3 {
     position: absolute;
@@ -85,6 +120,7 @@
 #navbar {
     position: relative;
 }
+
 #logout {
     position: absolute;
     right: 20px;
@@ -92,6 +128,8 @@
     height: 40px; */
     text-align: center;
 }
+
+
 
 /* login.html */
 .logoBox {
