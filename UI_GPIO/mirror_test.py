@@ -57,24 +57,48 @@ form_map = resource_path('navi_mirror_map.ui')
 form_map_class = uic.loadUiType(form_map)[0]
 
 class Thread_btn(QThread):
-    signal_next = pyqtSignal(bool)
+    signal_next = pyqtSignal(int)
+    signal_up = pyqtSignal(int)
+    signal_down = pyqtSignal(int)
     def __init__(self, parent):
         QThread.__init__(self)
         self.parent = parent
+        self.row = 0
 
-    def run(self):
+    def run(self, page):
         GPIO.setmode(GPIO.BOARD)
         GPIO.setup([12,16,18], GPIO.IN)
-        try:
-            GPIO.add_event_detect(12, GPIO.RISING, callback=self.test, bouncetime=800)
-        except:
-            GPIO.cleanup()
-            GPIO.setmode(GPIO.BOARD)
-            GPIO.setup([12,16,18], GPIO.IN)
-            GPIO.add_event_detect(12, GPIO.RISING, callback=self.test, bouncetime=800)
+        if page == 3:
+            try:
+                GPIO.add_event_detect(12, GPIO.RISING, callback=self.test, bouncetime=800)
+            except:
+                GPIO.cleanup()
+                GPIO.setmode(GPIO.BOARD)
+                GPIO.setup([12,16,18], GPIO.IN)
+                GPIO.add_event_detect(12, GPIO.RISING, callback=self.test, bouncetime=800)
+                GPIO.add_event_detect(16, GPIO.RISING, callback=self.up, bouncetime=800)
+                GPIO.add_event_detect(18, GPIO.RISING, callback=self.down, bouncetime=800)
+        
+        else:
+            try:
+                GPIO.add_event_detect(12, GPIO.RISING, callback=self.test, bouncetime=800)
+            except:
+                GPIO.cleanup()
+                GPIO.setmode(GPIO.BOARD)
+                GPIO.setup([12,16,18], GPIO.IN)
+                GPIO.add_event_detect(12, GPIO.RISING, callback=self.test, bouncetime=800)
+
 
     def test(self,a):
-        self.signal_next.emit(True)
+        self.signal_next.emit(self.row)
+
+    def up(self, a):
+        self.row += 1
+        self.signal_up.emit(self.row)
+    
+    def down(self, a):
+        self.row -= 1
+        self.signal_down.emit(self.row)
     
     def stop(self):
         self.quit()
@@ -82,6 +106,7 @@ class Thread_btn(QThread):
 
 class Thread_mic(QThread):
     signal_ready = pyqtSignal(bool)
+    signal_retry = pyqtSignal(bool)
     signal_next = pyqtSignal(str)
     def __init__(self, parent):
         QThread.__init__(self)
@@ -89,8 +114,25 @@ class Thread_mic(QThread):
         self.r = sr.Recognizer()
 
     def run(self):
-        with sr.Microphone() as source:
-            self.r.adjust_for_am
+        while True:
+            with sr.Microphone() as source:
+                self.r.adjust_for_ambient_noise(source)
+
+                self.signal_ready.emit(True)
+                try:
+                    audio = self.r.listen(source, timeout = 5)
+                except:
+                    self.signal_retry.emit(True)
+                    sleep(3)
+                    continue
+            try:
+                text = r.recognize_google(audio, language='ko')
+                break
+            except:
+                self.signal_retry.emit(True)
+                sleep(3)
+                continue
+
         self.signal_next.emit(text)
     
     def stop(self):
@@ -122,6 +164,9 @@ class Thread_sql(QThread):
                 ret.append(row)
         return ret
 
+    def stop(self):
+        self.quit()
+        self.wait(1000)
 
 class wait_window(QMainWindow, form_wait_class):
     def __init__(self):
@@ -140,7 +185,7 @@ class wait_window(QMainWindow, form_wait_class):
         self.push.show()
         self.push.threadAction()
         self.deleteLater()
-        
+
 class start_window(QMainWindow, form_start_class):
     def __init__(self):
         super().__init__()
@@ -156,7 +201,6 @@ class start_window(QMainWindow, form_start_class):
         self.x.stop()
         self.push = listening_window()
         self.push.show()
-        self.push.mic_listening.show()
         self.push.threadAction()
         self.deleteLater()
 
@@ -169,14 +213,31 @@ class listening_window(QMainWindow, form_listening_class):
         self.mic_listening = mic_listening()
 
     def threadAction(self):
-        self.x = Thread_mic(self) 
-        self.x.start()
-        self.x.signal_next.connect(self.btn_listening_to_search)
+        self.stt = Thread_mic(self) 
+        self.sql = Thread_sql(self)
+        self.stt.start()
+        self.sql.start()
+        self.stt.signal_ready.connect(self.ready_to_listening)
+        self.stt.signal_next.connect(self.start_to_search)
+        self.stt.signal_retry.connect(self.listen_failed)
+        self.sql.signal_check.connect(self.btn_listening_to_search)
+
+    def ready_to_listening(self):
+        self.mic_listening.show()
+
+    def listen_failed(self):
+        self.mic_listening.close()
+        # 인식 실패 문구 출력
+        sleep(3)
+    
+    def start_to_search(self, text):
+        self.stt.stop()
+        self.sql.check(text)
 
     def btn_listening_to_search(self, data):
-        self.x.stop()
         self.mic_listening.close()
         self.done = done_window(data)
+        self.sql.stop()
         self.done.show()
         self.done.threadAction()
         self.deleteLater()
@@ -211,19 +272,21 @@ class done_window(QMainWindow, form_done_class):
         self.x.start()
         self.x.signal_next.connect(self.btn_done_to_map)
 
-    def btn_done_to_map(self):
+    def btn_done_to_map(self, idx):
         self.x.stop()
-        self.start = map_window()
+        obj = self.room_list_file[idx]
+        num = obj[0]
+        self.start = map_window(num, obj)
         self.start.show()
         self.start.threadAction()
         self.deleteLater()
 
 class map_window(QMainWindow, form_map_class):
-    def __init__(self):
+    def __init__(self, num, obj):
         super().__init__()
         self.setupUi(self)
         self.setWindowFlags(Qt.FramelessWindowHint)
-        url = "http://cafefiles.naver.net/data21/2006/12/6/291/12801024-1-badpark.jpg"
+        url = db_code.storage.get_url(num)
         map_url = urllib.request.urlopen(url).read()
         pixmap = QtGui.QPixmap()
         pixmap.loadFromData(map_url)

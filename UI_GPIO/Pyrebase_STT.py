@@ -26,6 +26,7 @@ class STT:
         r = sr.Recognizer()
         with sr.Microphone() as source:
             r.adjust_for_ambient_noise(source)
+            
             print("Say something!")
             try:
                 audio = r.listen(source, timeout=5)
@@ -62,4 +63,4 @@ class STT:
             print("찾지 못했습니다.")
             return
 
-        return room_list
+        return input

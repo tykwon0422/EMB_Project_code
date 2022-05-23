@@ -46,6 +46,9 @@ class storage:
         download_name = 'download.jpg'
         self.stor.child(path + filename).download("", download_name)
 
+    def get_url(self, filename):
+        return self.stor.child("map/floor{}/{}.png".format(filename[0], filename)).get_url()
+
 
 class database:
     def __init__(self):
