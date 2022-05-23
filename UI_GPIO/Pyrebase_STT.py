@@ -63,4 +63,4 @@ class STT:
             print("찾지 못했습니다.")
             return
 
-        return input
+        return room_list
