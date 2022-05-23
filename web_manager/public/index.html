@@ -6,8 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
-  <link rel="stylesheet" href="style.css?after4">
+  <link rel="stylesheet" href="style.css?after5">
 </head>
+
 <body>
 
   <script src="https://www.gstatic.com/firebasejs/8.6.5/firebase-app.js"></script>
@@ -21,6 +22,8 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 
   <script src="http://html2canvas.hertzen.com/dist/html2canvas.js"></script>
+
+
 
   <script>
     const firebaseConfig = {
@@ -72,6 +75,8 @@
     </div>
   </div>
 
+  
+
   <div class="mapDefinition">
     <div class="mapDefinitionIn">
       <div class="manageZone"> Manage Zone</div>
@@ -94,13 +99,17 @@
     const storage = firebase.storage();
     var database = firebase.database();
     const auth = firebase.auth();
+    var storagePathReference;
+    var storageRef = storage.ref();
 
     var charge = document.getElementById('Charge');
     var roomName = document.getElementById('Roomname');
     var phone = document.getElementById('Phone');
+    var positionArr = [2];
 
     var floorNumb = 0;
     var roomNumb = 0;
+    var floor = 0;  // 스토리지와 db에 저장 시(캡처) 사용되는 인자
 
     auth.onAuthStateChanged((user) => {   // 사용자의 로그인 상태를 확인
       if (user) {
@@ -113,10 +122,10 @@
             $('#changed').remove();
             
             floorNumb = '3/';
+            floor = 'floor3';
       
-            var storageRef = storage.ref();
             // Create a reference with an initial file path and name
-            var storagePathReference = storage.ref('floor3/3층 기본 지도(명칭x).png');
+            storagePathReference = storage.ref('floor3/3층 기본 지도(명칭x).png');
       
             // Create a reference from a Google Cloud Storage URI
             var gsReference = storage.refFromURL('gs://bucket/floor3/3층 기본 지도(명칭x).png');
@@ -133,7 +142,7 @@
                 <img src="${url}" class="mapImg3 bg-light" id="mapImg3"></img>
               </div>
               <div class="changed" id='changed'>
-                <img src="${url}" class="changedImg3 bg-light" id="changedImg3"></img>
+                <!--<img src="${url}" class="changedImg3 bg-light" id="changedImg3"></img>-->
               </div>`;
       
               $('.mapImage').append(mapTemplate);
@@ -141,8 +150,8 @@
               var buttonTemplate = `<button class="button" type="button" id='button301' style='top: 130px; left: 370px;'>
                 301
               </button>
-              <button class="button" type="button" id='button304' style='top: 225px; left: 370px;'>
-                304
+              <button class="button" type="button" id='button303' style='top: 225px; left: 370px;'>
+                303
               </button>
               <button class="button" type="button" id='button305' style='top: 317px; left: 370px;'>
                 305
@@ -195,46 +204,231 @@
               $('#button301').click(function() {
                 roomNumb = '301/';
                 readData(floorNumb, roomNumb);
-                
                 $('#save').click(function() {
                   writeData(floorNumb, roomNumb);
-                  console.log(floorNumb);
-                  console.log(roomNumb);
-                })
-                console.log('check');
-              })
+                  //saveAs(url, 'floor3');
+                  $('#mycanvas').remove();
+                  var resultTemplate = `<canvas id="mycanvas"></canvas>`
+                  $('.changed').append(resultTemplate);
+            
+                  Setfunction(floorNumb);
+            
+                })  // #save
+            
+              })  
               
-              $('#button304').click(function() {
-                roomNumb = '304/';
+              $('#button303').click(function() {
+                roomNumb = '303/';
                 readData(floorNumb, roomNumb);
                 $('#save').click(function() {
                   writeData(floorNumb, roomNumb);
-                  console.log(floorNumb);
-                  console.log(roomNumb);
-                })
-              })
-                
-              
+                  $('#mycanvas').remove();
+                  var resultTemplate = `<canvas id="mycanvas"></canvas>`
+                  $('.changed').append(resultTemplate);
             
-      
-      
-      
-      
+                  Setfunction(floorNumb);
+            
+                })  // #save
+              })  
+            
+              $('#button305').click(function() {
+                roomNumb = '305/';
+                readData(floorNumb, roomNumb);
+                $('#save').click(function() {
+                  writeData(floorNumb, roomNumb);
+                  $('#mycanvas').remove();
+                  var resultTemplate = `<canvas id="mycanvas"></canvas>`
+                  $('.changed').append(resultTemplate);
+            
+                  Setfunction(floorNumb);
+                })  // #save
+              })  
               
-            })
+              $('#button307').click(function() {
+                roomNumb = '307/';
+                readData(floorNumb, roomNumb);
+                $('#save').click(function() {
+                  writeData(floorNumb, roomNumb);
+                  $('#mycanvas').remove();
+                  var resultTemplate = `<canvas id="mycanvas"></canvas>`
+                  $('.changed').append(resultTemplate);
+            
+                  Setfunction(floorNumb);
+                })  // #save
+              })  
+            
+              $('#button309').click(function() {
+                roomNumb = '309/';
+                readData(floorNumb, roomNumb);
+                $('#save').click(function() {
+                  writeData(floorNumb, roomNumb);
+                  $('#mycanvas').remove();
+                  var resultTemplate = `<canvas id="mycanvas"></canvas>`
+                  $('.changed').append(resultTemplate);
+            
+                  Setfunction(floorNumb);
+                })  // #save
+              })  
+      
+              $('#button311').click(function() {
+                roomNumb = '311/';
+                readData(floorNumb, roomNumb);
+                $('#save').click(function() {
+                  writeData(floorNumb, roomNumb);
+                  $('#mycanvas').remove();
+                  var resultTemplate = `<canvas id="mycanvas"></canvas>`
+                  $('.changed').append(resultTemplate);
+            
+                  Setfunction(floorNumb);
+                })  // #save
+              })  
+      
+              $('#button314').click(function() {
+                roomNumb = '314/';
+                readData(floorNumb, roomNumb);
+                $('#save').click(function() {
+                  writeData(floorNumb, roomNumb);
+                  $('#mycanvas').remove();
+                  var resultTemplate = `<canvas id="mycanvas"></canvas>`
+                  $('.changed').append(resultTemplate);
+            
+                  Setfunction(floorNumb);
+                })  // #save
+              })
+      
+              $('#button316').click(function() {
+                roomNumb = '316/';
+                readData(floorNumb, roomNumb);
+                $('#save').click(function() {
+                  writeData(floorNumb, roomNumb);
+                  $('#mycanvas').remove();
+                  var resultTemplate = `<canvas id="mycanvas"></canvas>`
+                  $('.changed').append(resultTemplate);
+            
+                  Setfunction(floorNumb);
+                })  // #save
+              })  
+      
+              $('#button318').click(function() {
+                roomNumb = '318/';
+                readData(floorNumb, roomNumb);
+                $('#save').click(function() {
+                  writeData(floorNumb, roomNumb);
+                  $('#mycanvas').remove();
+                  var resultTemplate = `<canvas id="mycanvas"></canvas>`
+                  $('.changed').append(resultTemplate);
+            
+                  Setfunction(floorNumb);
+                })  // #save
+              })  
+
+              $('#button320').click(function() {
+                roomNumb = '320/';
+                readData(floorNumb, roomNumb);
+                $('#save').click(function() {
+                  writeData(floorNumb, roomNumb);
+                  $('#mycanvas').remove();
+                  var resultTemplate = `<canvas id="mycanvas"></canvas>`
+                  $('.changed').append(resultTemplate);
+            
+                  Setfunction(floorNumb);
+                })  // #save
+              })  
+
+              $('#button321').click(function() {
+                roomNumb = '322/';
+                readData(floorNumb, roomNumb);
+                $('#save').click(function() {
+                  writeData(floorNumb, roomNumb);
+                  $('#mycanvas').remove();
+                  var resultTemplate = `<canvas id="mycanvas"></canvas>`
+                  $('.changed').append(resultTemplate);
+            
+                  Setfunction(floorNumb);
+                })  // #save
+              })  
+
+              $('#button323').click(function() {
+                roomNumb = '323/';
+                readData(floorNumb, roomNumb);
+                $('#save').click(function() {
+                  writeData(floorNumb, roomNumb);
+                  $('#mycanvas').remove();
+                  var resultTemplate = `<canvas id="mycanvas"></canvas>`
+                  $('.changed').append(resultTemplate);
+            
+                  Setfunction(floorNumb);
+                })  // #save
+              }) 
+
+              $('#button324').click(function() {
+                roomNumb = '324/';
+                readData(floorNumb, roomNumb);
+                $('#save').click(function() {
+                  writeData(floorNumb, roomNumb);
+                  $('#mycanvas').remove();
+                  var resultTemplate = `<canvas id="mycanvas"></canvas>`
+                  $('.changed').append(resultTemplate);
+            
+                  Setfunction(floorNumb);
+                })  // #save
+              })  
+
+              $('#button326').click(function() {
+                roomNumb = '326/';
+                readData(floorNumb, roomNumb);
+                $('#save').click(function() {
+                  writeData(floorNumb, roomNumb);
+                  $('#mycanvas').remove();
+                  var resultTemplate = `<canvas id="mycanvas"></canvas>`
+                  $('.changed').append(resultTemplate);
+            
+                  Setfunction(floorNumb);
+                })  // #save
+              })  
+
+              $('#button327').click(function() {
+                roomNumb = '327/';
+                readData(floorNumb, roomNumb);
+                $('#save').click(function() {
+                  writeData(floorNumb, roomNumb);
+                  $('#mycanvas').remove();
+                  var resultTemplate = `<canvas id="mycanvas"></canvas>`
+                  $('.changed').append(resultTemplate);
+            
+                  Setfunction(floorNumb);
+                })  // #save
+              })  
+
+              $('#button329').click(function() {
+                roomNumb = '329/';
+                readData(floorNumb, roomNumb);
+                $('#save').click(function() {
+                  writeData(floorNumb, roomNumb);
+                  $('#mycanvas').remove();
+                  var resultTemplate = `<canvas id="mycanvas"></canvas>`
+                  $('.changed').append(resultTemplate);
+            
+                  Setfunction(floorNumb);
+                })  // #save
+              })  
+
+
+            })  //getdownloadurl.then
             .catch((error) => {
               // Handle any errors
-            });
-          })
+            }); //getdownloadurl.catch
+          })  // #floor3
       
           $('#floor4').click(function() {
       
             $('#thumbnail').remove();
             $('#changed').remove();
+
+            floorNumb = '4/';
       
-            var storageRef = storage.ref();
             // Create a reference with an initial file path and name
-            var storagePathReference = storage.ref('floor4/4층 기본 지도(명칭x).png');
+            storagePathReference = storage.ref('floor4/4층 기본 지도(명칭x).png');
       
             // Create a reference from a Google Cloud Storage URI
             var gsReference = storage.refFromURL('gs://bucket/floor4/4층 기본 지도(명칭x).png');
@@ -251,7 +445,7 @@
                 <img src="${url}" class="mapImg bg-light" id="mapImg4" >
               </div>
               <div class="changed" id='changed'>
-                <img src="${url}" class="changedImg3 bg-light" id="changedImg3"></img>
+                
               </div>`;
       
               $('.mapImage').append(mapTemplate);
@@ -318,21 +512,303 @@
               </button>
               <button class="button" type="button" id='button427' style='top: 1100px; left: 350px;'>
                 427
+              </button>
+              <button class="button" type="button" id='button428' style='top: 1100px; left: 350px;'>
+                428
+              </button>
+              <button class="button" type="button" id='button430' style='top: 1100px; left: 350px;'>
+                430
               </button>`;
       
               $('#thumbnail').append(buttonTemplate);
 
-            })
+              $('#button403').click(function() {
+                roomNumb = '403/';
+                readData(floorNumb, roomNumb);
+                $('#save').click(function() {
+                  writeData(floorNumb, roomNumb);
+                  $('#mycanvas').remove();
+                  var resultTemplate = `<canvas id="mycanvas"></canvas>`
+                  $('.changed').append(resultTemplate);
+            
+                  Setfunction(floorNumb);
+                })  // #save
+                console.log('check');
+              })  
+              
+              $('#button404').click(function() {
+                roomNumb = '404/';
+                readData(floorNumb, roomNumb);
+                $('#save').click(function() {
+                  writeData(floorNumb, roomNumb);
+                  $('#mycanvas').remove();
+                  var resultTemplate = `<canvas id="mycanvas"></canvas>`
+                  $('.changed').append(resultTemplate);
+            
+                  Setfunction(floorNumb);
+                })  // #save
+              })  
+                
+              $('#button405').click(function() {
+                roomNumb = '405/';
+                readData(floorNumb, roomNumb);
+                $('#save').click(function() {
+                  writeData(floorNumb, roomNumb);
+                  $('#mycanvas').remove();
+                  var resultTemplate = `<canvas id="mycanvas"></canvas>`
+                  $('.changed').append(resultTemplate);
+            
+                  Setfunction(floorNumb);
+                })  // #save
+              })  
+              
+              $('#button407').click(function() {
+                roomNumb = '407/';
+                readData(floorNumb, roomNumb);
+                $('#save').click(function() {
+                  writeData(floorNumb, roomNumb);
+                  $('#mycanvas').remove();
+                  var resultTemplate = `<canvas id="mycanvas"></canvas>`
+                  $('.changed').append(resultTemplate);
+            
+                  Setfunction(floorNumb);
+                })  // #save
+              })  
+            
+              $('#button409').click(function() {
+                roomNumb = '409/';
+                readData(floorNumb, roomNumb);
+                $('#save').click(function() {
+                  writeData(floorNumb, roomNumb);
+                  $('#mycanvas').remove();
+                  var resultTemplate = `<canvas id="mycanvas"></canvas>`
+                  $('.changed').append(resultTemplate);
+            
+                  Setfunction(floorNumb);
+                })  // #save
+              })  
+      
+              $('#button412').click(function() {
+                roomNumb = '412/';
+                readData(floorNumb, roomNumb);
+                $('#save').click(function() {
+                  writeData(floorNumb, roomNumb);
+                  $('#mycanvas').remove();
+                  var resultTemplate = `<canvas id="mycanvas"></canvas>`
+                  $('.changed').append(resultTemplate);
+            
+                  Setfunction(floorNumb);
+                })  // #save
+              })  
+      
+              $('#button414').click(function() {
+                roomNumb = '414/';
+                readData(floorNumb, roomNumb);
+                $('#save').click(function() {
+                  writeData(floorNumb, roomNumb);
+                  $('#mycanvas').remove();
+                  var resultTemplate = `<canvas id="mycanvas"></canvas>`
+                  $('.changed').append(resultTemplate);
+            
+                  Setfunction(floorNumb);
+                })  // #save
+              })  
+      
+              $('#button416').click(function() {
+                roomNumb = '416/';
+                readData(floorNumb, roomNumb);
+                $('#save').click(function() {
+                  writeData(floorNumb, roomNumb);
+                  $('#mycanvas').remove();
+                  var resultTemplate = `<canvas id="mycanvas"></canvas>`
+                  $('.changed').append(resultTemplate);
+            
+                  Setfunction(floorNumb);
+                })  // #save
+              }) 
+              
+              $('#button417').click(function() {
+                roomNumb = '417/';
+                readData(floorNumb, roomNumb);
+                $('#save').click(function() {
+                  writeData(floorNumb, roomNumb);
+                  $('#mycanvas').remove();
+                  var resultTemplate = `<canvas id="mycanvas"></canvas>`
+                  $('.changed').append(resultTemplate);
+            
+                  Setfunction(floorNumb);
+                })  // #save
+              })  
+      
+              $('#button418').click(function() {
+                roomNumb = '418/';
+                readData(floorNumb, roomNumb);
+                $('#save').click(function() {
+                  writeData(floorNumb, roomNumb);
+                  $('#mycanvas').remove();
+                  var resultTemplate = `<canvas id="mycanvas"></canvas>`
+                  $('.changed').append(resultTemplate);
+            
+                  Setfunction(floorNumb);
+                })  // #save
+              })  
+
+              $('#button419').click(function() {
+                roomNumb = '419/';
+                readData(floorNumb, roomNumb);
+                $('#save').click(function() {
+                  writeData(floorNumb, roomNumb);
+                  $('#mycanvas').remove();
+                  var resultTemplate = `<canvas id="mycanvas"></canvas>`
+                  $('.changed').append(resultTemplate);
+            
+                  Setfunction(floorNumb);
+                })  // #save
+              })  
+
+              $('#button420').click(function() {
+                roomNumb = '420/';
+                readData(floorNumb, roomNumb);
+                $('#save').click(function() {
+                  writeData(floorNumb, roomNumb);
+                  $('#mycanvas').remove();
+                  var resultTemplate = `<canvas id="mycanvas"></canvas>`
+                  $('.changed').append(resultTemplate);
+            
+                  Setfunction(floorNumb);
+                })  // #save
+              })  
+
+              $('#button421').click(function() {
+                roomNumb = '421/';
+                readData(floorNumb, roomNumb);
+                $('#save').click(function() {
+                  writeData(floorNumb, roomNumb);
+                  $('#mycanvas').remove();
+                  var resultTemplate = `<canvas id="mycanvas"></canvas>`
+                  $('.changed').append(resultTemplate);
+            
+                  Setfunction(floorNumb);
+                })  // #save
+              })  
+
+              $('#button422').click(function() {
+                roomNumb = '422/';
+                readData(floorNumb, roomNumb);
+                $('#save').click(function() {
+                  writeData(floorNumb, roomNumb);
+                  $('#mycanvas').remove();
+                  var resultTemplate = `<canvas id="mycanvas"></canvas>`
+                  $('.changed').append(resultTemplate);
+            
+                  Setfunction(floorNumb);
+                })  // #save
+              })  
+
+              $('#button423').click(function() {
+                roomNumb = '423/';
+                readData(floorNumb, roomNumb);
+                $('#save').click(function() {
+                  writeData(floorNumb, roomNumb);
+                  $('#mycanvas').remove();
+                  var resultTemplate = `<canvas id="mycanvas"></canvas>`
+                  $('.changed').append(resultTemplate);
+            
+                  Setfunction(floorNumb);
+                })  // #save
+              })  
+
+              $('#button424').click(function() {
+                roomNumb = '424/';
+                readData(floorNumb, roomNumb);
+                $('#save').click(function() {
+                  writeData(floorNumb, roomNumb);
+                  $('#mycanvas').remove();
+                  var resultTemplate = `<canvas id="mycanvas"></canvas>`
+                  $('.changed').append(resultTemplate);
+            
+                  Setfunction(floorNumb);
+                })  // #save
+              })  
+
+              $('#button425').click(function() {
+                roomNumb = '425/';
+                readData(floorNumb, roomNumb);
+                $('#save').click(function() {
+                  writeData(floorNumb, roomNumb);
+                  $('#mycanvas').remove();
+                  var resultTemplate = `<canvas id="mycanvas"></canvas>`
+                  $('.changed').append(resultTemplate);
+            
+                  Setfunction(floorNumb);
+                })  // #save
+              })  
+
+              $('#button426').click(function() {
+                roomNumb = '426/';
+                readData(floorNumb, roomNumb);
+                $('#save').click(function() {
+                  writeData(floorNumb, roomNumb);
+                  $('#mycanvas').remove();
+                  var resultTemplate = `<canvas id="mycanvas"></canvas>`
+                  $('.changed').append(resultTemplate);
+            
+                  Setfunction(floorNumb);
+                })  // #save
+              }) 
+
+              $('#button427').click(function() {
+                roomNumb = '427/';
+                readData(floorNumb, roomNumb);
+                $('#save').click(function() {
+                  writeData(floorNumb, roomNumb);
+                  $('#mycanvas').remove();
+                  var resultTemplate = `<canvas id="mycanvas"></canvas>`
+                  $('.changed').append(resultTemplate);
+            
+                  Setfunction(floorNumb);
+                })  // #save
+              })  
+
+              $('#button428').click(function() {
+                roomNumb = '428/';
+                readData(floorNumb, roomNumb);
+                $('#save').click(function() {
+                  writeData(floorNumb, roomNumb);
+                  $('#mycanvas').remove();
+                  var resultTemplate = `<canvas id="mycanvas"></canvas>`
+                  $('.changed').append(resultTemplate);
+            
+                  Setfunction(floorNumb);
+                })  // #save
+              })  
+
+              $('#button430').click(function() {
+                roomNumb = '430/';
+                readData(floorNumb, roomNumb);
+                $('#save').click(function() {
+                  writeData(floorNumb, roomNumb);
+                  $('#mycanvas').remove();
+                  var resultTemplate = `<canvas id="mycanvas"></canvas>`
+                  $('.changed').append(resultTemplate);
+            
+                  Setfunction(floorNumb);
+                })  // #save
+              })  
+
+            })  //getdownloadurl.then
             .catch((error) => {
               // Handle any errors
-            });
-          })
+            }); //getdownloadurl.catch
+          })  // #floor4
       
-        }
-      } else {
+        } // if (uid ==)
+      } // if (user) 
+      else {
         window.location.href = "/login.html";  // 로그인 상태가 아니면 로그인 화면으로 이동
       }
-    });
+    }); // onauthstatechanged
+
 
     $('#logout').click(function() {   // 로그아웃 버튼 동작 구현
       auth.signOut().then(function() {
@@ -341,7 +817,7 @@
         alert("로그아웃 에러");
       })
     })
-
+    
     
     function readData(floorNumb, roomNumb) {    // 파이어베이스로부터 데이터를 읽어오는 함수
       var buttonRef = firebase.database().ref(floorNumb + roomNumb);
@@ -350,6 +826,13 @@
         roomName.value = snapshot.val().name;
         phone.value = snapshot.val().phone;
       });
+      var positionRef = firebase.database().ref(floorNumb + roomNumb + "position_key");
+      positionRef.on('value', (snapshot) => {
+        positionArr[0] = snapshot.val().x;
+        positionArr[1] = snapshot.val().y;
+        console.log(positionArr[0]);
+        console.log(positionArr[1]);
+      })
     }
 
     function writeData(floorNumb, roomNumb) {   // 파이어베이스에 데이터를 쓰는 함수
@@ -358,8 +841,88 @@
         name: roomName.value,
         phone: phone.value
       });
+      firebase.database().ref(floorNumb + roomNumb + "position_key").set({
+        x: positionArr[0],
+        y: positionArr[1]
+      });
+
     }
 
+    var Setfunction = function(floorNum){
+      const dbref = firebase.database().ref(floorNum);
+
+      storagePathReference.getDownloadURL().then(url => {
+        var imageInfo = {};
+        imageInfo.url = url;
+        imageInfo.loc = [];
+        dbref.on('value', (snapshot) => {
+          list = Object.values(snapshot.val());
+          for(var i = 0; i < list.length; i++){
+            if(list[i]['position_key'] == undefined){continue;};
+            imageInfo.loc.push({x: list[i]['position_key']['x'], 
+                                y: list[i]['position_key']['y'], 
+                                Name: list[i]['name']});
+          }
+        });
+        setCanvas(imageInfo, floorNum);
+      })
+      .catch(console.log);
+    }
+
+
+    function wrapText(context, text, x, y) {
+      var words = text.split(' ');
+      var new_words = [];
+
+      for(var n = 0; n < words.length; n++) {
+        if (context.measureText(words[n]).width > 100){
+          new_words.push(words[n].substr(0, 4));
+          new_words.push(words[n].substr(4));
+        }
+        else{
+          new_words.push(words[n]);
+        }
+      }
+      var len = new_words.length;
+
+      if (len > 4){
+        context.font = `${15 - len}px Verdana`;
+      }
+
+      for(var i = 0; i < len; i++){
+        context.fillText(new_words[i], x, y - 10 * (len - 1) + 20 * i);
+      }
+    }
+
+    var setCanvas = function(Info, floornum){
+      var canvas = document.getElementById('mycanvas');
+      if (canvas.getContext) {
+        var ctx = canvas.getContext('2d');
+        var imageObj = new Image();
+        imageObj.setAttribute("crossOrigin", "anonymous");
+        imageObj.onload = function () {
+          canvas.width=517;
+          canvas.height=1180;
+          ctx.drawImage(imageObj, 0, 0, canvas.width, canvas.height);
+        
+          $.each(Info.loc, function(key, item){
+            ctx.textBaseline = 'middle';
+            ctx.textAlign = "center";
+            ctx.font="15px Verdana";
+            ctx.fillStyle = "white";
+            wrapText(ctx, item.Name, item.x, item.y);
+            ctx.fill();
+          });
+          
+          canvas.toBlob(function(blob){
+            var uploadTask = storageRef.child('map/floor' + floornum + 'result3.png').put(blob);
+          }, 'image/png', 1.0);
+        };
+        imageObj.src = Info.url;
+      };
+    };
+
+    
     
     /*$('#send').click(function() {
 
