@@ -9,7 +9,7 @@ class STT:
         firebaseConfig = {
         #insert your firebase config
         }
-
+        test
         firebase = pyrebase.initialize_app(firebaseConfig)
         # Get Database
         self.db = firebase.database()
