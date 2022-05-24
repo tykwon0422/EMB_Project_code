@@ -65,29 +65,20 @@ class Thread_btn(QThread):
         self.parent = parent
         self.row = 0
 
-    def run(self, page):
+    def run(self):
         GPIO.setmode(GPIO.BOARD)
         GPIO.setup([12,16,18], GPIO.IN)
-        if page == 3:
-            try:
-                GPIO.add_event_detect(12, GPIO.RISING, callback=self.test, bouncetime=800)
-            except:
-                GPIO.cleanup()
-                GPIO.setmode(GPIO.BOARD)
-                GPIO.setup([12,16,18], GPIO.IN)
-                GPIO.add_event_detect(12, GPIO.RISING, callback=self.test, bouncetime=800)
-                GPIO.add_event_detect(16, GPIO.RISING, callback=self.up, bouncetime=800)
-                GPIO.add_event_detect(18, GPIO.RISING, callback=self.down, bouncetime=800)
-        
-        else:
-            try:
-                GPIO.add_event_detect(12, GPIO.RISING, callback=self.test, bouncetime=800)
-            except:
-                GPIO.cleanup()
-                GPIO.setmode(GPIO.BOARD)
-                GPIO.setup([12,16,18], GPIO.IN)
-                GPIO.add_event_detect(12, GPIO.RISING, callback=self.test, bouncetime=800)
-
+        try:
+            GPIO.add_event_detect(12, GPIO.RISING, callback=self.test, bouncetime=800)
+            GPIO.add_event_detect(16, GPIO.RISING, callback=self.up, bouncetime=800)
+            GPIO.add_event_detect(18, GPIO.RISING, callback=self.down, bouncetime=800)
+        except:
+            GPIO.cleanup()
+            GPIO.setmode(GPIO.BOARD)
+            GPIO.setup([12,16,18], GPIO.IN)
+            GPIO.add_event_detect(12, GPIO.RISING, callback=self.test, bouncetime=800)
+            GPIO.add_event_detect(16, GPIO.RISING, callback=self.up, bouncetime=800)
+            GPIO.add_event_detect(18, GPIO.RISING, callback=self.down, bouncetime=800)
 
     def test(self,a):
         self.signal_next.emit(self.row)
@@ -112,13 +103,14 @@ class Thread_mic(QThread):
         QThread.__init__(self)
         self.parent = parent
         self.r = sr.Recognizer()
-
+ 
     def run(self):
         while True:
             with sr.Microphone() as source:
                 self.r.adjust_for_ambient_noise(source)
 
                 self.signal_ready.emit(True)
+                print("말을 해!!")
                 try:
                     audio = self.r.listen(source, timeout = 5)
                 except:
@@ -126,14 +118,20 @@ class Thread_mic(QThread):
                     sleep(3)
                     continue
             try:
-                text = r.recognize_google(audio, language='ko')
+                text = self.r.recognize_google(audio, language='ko')
+                self.signal_next.emit(text)
+                print(text)
                 break
-            except:
+            except sr.UnknownValueError:
                 self.signal_retry.emit(True)
+                print("음성을 인식하지 못 했습니다.")
                 sleep(3)
                 continue
-
-        self.signal_next.emit(text)
+            except sr.RequestError as e:
+                self.signal_retry.emit(True)
+                print("에러 {0}".format(e))
+                sleep(3)
+                continue
     
     def stop(self):
         self.quit()
@@ -147,13 +145,16 @@ class Thread_sql(QThread):
         self.sql_db = db_code.sql()
         self.fb_db = db_code.database()
         
+    def run(self):
+        self.parent.signal_text.connect(self.check)
+
     def update(self):
         self.sql_db.clear()
         rooms = self.fb_db.read_data()
         for room in rooms:
             data = (room["number"], room["name"], room["charge"], room["phone"])
             self.sql_db.insert_rooms(data)
-    
+
     def check(self, text):
         ret = []
         rows = self.sql_db.search()
@@ -162,7 +163,8 @@ class Thread_sql(QThread):
                     SequenceMatcher(None, row[1], input + "연구실").ratio())
             if score > 0.6 or row[0] in text or row[2] in text or text in row[1]:
                 ret.append(row)
-        return ret
+        print("check!")
+        self.signal_check.emit(ret)
 
     def stop(self):
         self.quit()
@@ -175,7 +177,7 @@ class wait_window(QMainWindow, form_wait_class):
         self.setWindowFlags(Qt.FramelessWindowHint)
         
     def threadAction(self):
-        self.x = Thread_btn(self) 
+        self.x = Thread_btn(self)
         self.x.start()
         self.x.signal_next.connect(self.btn_wait_to_start)
 
@@ -205,6 +207,7 @@ class start_window(QMainWindow, form_start_class):
         self.deleteLater()
 
 class listening_window(QMainWindow, form_listening_class):
+    signal_text = pyqtSignal(str)
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -232,7 +235,8 @@ class listening_window(QMainWindow, form_listening_class):
     
     def start_to_search(self, text):
         self.stt.stop()
-        self.sql.check(text)
+        self.sql.start()
+        self.signal_text.emit(text)
 
     def btn_listening_to_search(self, data):
         self.mic_listening.close()
@@ -260,23 +264,24 @@ class done_window(QMainWindow, form_done_class):
         super().__init__()
         self.setupUi(self)
         self.setWindowFlags(Qt.FramelessWindowHint)
-        self.room_list_file = data
-        self.room_list.setRowCount(len(self.room_list_file))
+        self.object_list_file = data
 
-        for row in range(len(self.room_list_file)):
-            for column in range(len(self.room_list_file[row])):
-                self.room_list.setItem(row, column, QTableWidgetItem(self.room_list_file[row][column]))
-
+        object_lst=[]
+        for row in range(len(self.object_list_file)):
+            object_lst.append(' '.join(map(str, self.object_list_file[row])))
+        
+        print(object_lst)
+        for row in object_lst:
+            self.object_list.addItem(row)
+        
     def threadAction(self):
         self.x = Thread_btn(self) 
         self.x.start()
         self.x.signal_next.connect(self.btn_done_to_map)
 
-    def btn_done_to_map(self, idx):
+    def btn_done_to_map(self):
         self.x.stop()
-        obj = self.room_list_file[idx]
-        num = obj[0]
-        self.start = map_window(num, obj)
+        self.start = map_window()
         self.start.show()
         self.start.threadAction()
         self.deleteLater()

@@ -98,57 +98,6 @@
      <pixmap resource="description.qrc">:/description/description_done.png</pixmap>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_next">
-    <property name="geometry">
-     <rect>
-      <x>430</x>
-      <y>1650</y>
-      <width>20</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="icon">
-     <iconset resource="button.qrc">
-      <normaloff>:/button/next_button.png</normaloff>:/button/next_button.png</iconset>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButton_up">
-    <property name="geometry">
-     <rect>
-      <x>630</x>
-      <y>1650</y>
-      <width>20</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="icon">
-     <iconset resource="button.qrc">
-      <normaloff>:/button/up_button.png</normaloff>:/button/up_button.png</iconset>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButton_down">
-    <property name="geometry">
-     <rect>
-      <x>530</x>
-      <y>1650</y>
-      <width>20</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="icon">
-     <iconset resource="button.qrc">
-      <normaloff>:/button/down_button.png</normaloff>:/button/down_button.png</iconset>
-    </property>
-   </widget>
    <widget class="QTableWidget" name="room_list">
     <property name="geometry">
      <rect>
@@ -157,6 +106,14 @@
       <width>1080</width>
       <height>600</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>18</pointsize>
+      <weight>75</weight>
+      <italic>false</italic>
+      <bold>true</bold>
+     </font>
     </property>
     <property name="rowCount">
      <number>1</number>
@@ -181,12 +138,12 @@
     </column>
     <column>
      <property name="text">
-      <string>이름</string>
+      <string>담당자</string>
      </property>
     </column>
     <column>
      <property name="text">
-      <string>담당자 </string>
+      <string>이름</string>
      </property>
     </column>
     <column>
@@ -195,20 +152,22 @@
      </property>
     </column>
    </widget>
-   <widget class="QLabel" name="label">
+   <widget class="QListWidget" name="object_list">
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>827</y>
+      <y>836</y>
       <width>1080</width>
-      <height>80</height>
+      <height>600</height>
      </rect>
     </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="pixmap">
-     <pixmap resource="select.qrc">:/select/select.png</pixmap>
+    <property name="font">
+     <font>
+      <pointsize>18</pointsize>
+      <weight>75</weight>
+      <italic>false</italic>
+      <bold>true</bold>
+     </font>
     </property>
    </widget>
   </widget>
